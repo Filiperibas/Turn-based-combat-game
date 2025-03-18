@@ -20,6 +20,17 @@ class Personagem:
     def exibir_detalhes(self):
         return f"Nome: {self.get_nome()}\nVida: {self.get_vida()}\nNivel: {self.get_nivel()}"
 
+    def receber_ataque(self, dano):
+        self.__vida -= dano
+        if self.__vida <= 0:
+            self.__vida = 0
+
+    def atacar(self, alvo):
+        dano = self.__nivel * 2
+        alvo.receber_ataque(dano)
+        print(f"{self.get_nome()} atacou {alvo.get_nome()} e causou {dano} de dano!")
+
+
 class Heroi(Personagem):
     def __init__(self, nome, vida, nivel, habilidade) -> None:
         super().__init__(nome, vida, nivel) 
@@ -30,6 +41,11 @@ class Heroi(Personagem):
 
     def exibir_detalhes(self):
         return f"{super().exibir_detalhes()}\nHabilidades: {self.get_habilidade()}"
+
+    def ataque_especial(self, alvo):
+        dano = self.get_nivel() * 5
+        alvo.receber_ataque(dano)
+        print(f"{self.get_nome()} usou a habilidade especial {self.get_habilidade()} em {alvo.get_nome()} e causou {dano} de dano!")
 
 class Inimigo(Personagem):
     def __init__(self, nome, vida, nivel, tipo) -> None:
@@ -59,6 +75,22 @@ class Jogo:
             
             input("Pressione enter para atacar...")
             escolha = input("Escolha (1 - Ataque normal) (2 - Ataque Especial): ")
+
+            if escolha == "1":
+                self.heroi.atacar(self.inimigo)
+            elif escolha == "2":
+                self.heroi.ataque_especial(self.inimigo)
+            else:
+                print("Escolha inválida. Escolha novamente.")
+
+            if self.inimigo.get_vida() > 0:
+                # Inimigo ataca o Heroi
+                self.inimigo.atacar(self.heroi)
+
+        if self.heroi.get_vida() > 0:
+            print("\nParabéns, você venceu a batalha!")
+        else: 
+            print("\nVocê foi derrotado!")
 
 # Criar instâncias do jogo e iniciar batalha
 
